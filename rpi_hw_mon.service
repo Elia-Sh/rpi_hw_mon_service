@@ -1,0 +1,31 @@
+[Unit]
+Description=PythonHwMonitor
+After=syslog.target systemd-journald.socket
+
+# The service is executed with root,
+# such it should reside under /etc/systemd/system
+#   -> thus will provide an installtion script for of files into proper path,
+#      and setting: WorkingDirectory + ExecStart
+# can be performed using - (!! must be executed under root.)
+#   $ systemctl enable /home/elia/git/py/rpi_hw_mon.service
+# 
+# to uninstall - 
+#   $ systemctl disable /home/elia/git/py/rpi_hw_mon.service
+
+# Note -> to reload the service -> after changing the ".service" file ->
+#   $ systemctl daemon-reload
+#   $ systemctl restart rpi_hw_mon.service
+#   $ systemctl status rpi_hw_mon.service
+
+
+
+[Service]
+WorkingDirectory=/home/elia/git/py/
+ExecStart=/usr/bin/sh -c '/home/elia/git/py/venv/bin/python /home/elia/git/py/rpi_hw_mon_service.py'
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
