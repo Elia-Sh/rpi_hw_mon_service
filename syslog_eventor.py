@@ -19,6 +19,8 @@ class SyslogEventor:
 
     SYSLOG_LINUX_FILE_HANDLER = '/dev/log'
     SYSLOG_OSX_FILE_HANDLER = '/var/run/syslog'
+    MAX_FILE_SIZE_BYTES = 10485760    # 10 Megabytes
+    NUMBER_OF_BACKUPS = 7
 
     def __init__(self, logger_name=None):
         self.logger_name = logger_name
@@ -47,13 +49,12 @@ class SyslogEventor:
         my_logger.addHandler(syslog_handler)
 
         # adding additional file handler -> double the logging for redundancy.
-        file_handler = logging.handlers.RotatingFileHandler(f'{logger_name}.log', mode='a', encoding='utf-8', backupCount=7)
+        file_handler = logging.handlers.RotatingFileHandler(filename=f'{logger_name}.log',
+            mode='a', encoding='utf-8',
+            backupCount=self.NUMBER_OF_BACKUPS, maxBytes=self.MAX_FILE_SIZE_BYTES)
         fh_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         file_handler.setFormatter(fh_formatter)
         my_logger.addHandler(file_handler)
-
-        # TODO add log rotation mechanism using RotatingFileHandler.doRollover()
-        #   https://docs.python.org/3/library/logging.handlers.html#logging.handlers.RotatingFileHandler
 
         self.logger_name = logger_name
 
